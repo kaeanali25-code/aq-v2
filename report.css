@@ -1,0 +1,23 @@
+/* report.css — Document Preview */
+.doc-preview{background:#fff;color:#1a1a2e;width:100%;min-height:600px;padding:40px;font-family:'Cairo',sans-serif;font-size:13px;line-height:1.75;direction:rtl;position:relative;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.5)}
+.dp-secret-bar{text-align:center;padding:7px;font-size:13px;font-weight:900;letter-spacing:4px;color:#fff;margin-bottom:16px}
+.dp-header{border-bottom:3px double #1a1a2e;padding-bottom:16px;margin-bottom:20px;text-align:center}
+.dp-org{font-size:11px;color:#777;letter-spacing:1px;margin-bottom:4px}
+.dp-type{font-size:20px;font-weight:900;color:#1a1a2e}
+.dp-badges{margin-top:8px;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
+.dp-badge{padding:3px 12px;border-radius:20px;font-size:11px;font-weight:800;color:#fff}
+.dp-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;background:#f6f6f6;border:1px solid #e0e0e0;border-radius:6px;padding:12px 16px;margin-bottom:18px;font-size:12px}
+.dp-meta-item strong{color:#333;font-weight:700}
+.dp-meta-item span{color:#555}
+.dp-divider{border:none;border-top:2px solid #1a1a2e;margin:12px 0}
+.dp-title{font-size:16px;font-weight:900;text-align:center;margin:12px 0;color:#1a1a2e}
+.dp-section{margin-bottom:16px}
+.dp-sec-head{font-size:12px;font-weight:900;color:#1a1a2e;border-right:4px solid #c9a227;padding-right:10px;margin-bottom:8px}
+.dp-sec-body{font-size:12px;color:#444;line-height:1.8}
+.dp-footer{border-top:2px solid #1a1a2e;margin-top:24px;padding-top:16px;display:flex;justify-content:space-between;align-items:flex-end;font-size:11px;color:#777;flex-wrap:wrap;gap:10px}
+.dp-sig-box{text-align:center;min-width:120px}
+.dp-sig-line{border-top:1px solid #1a1a2e;padding-top:6px;margin-top:32px;font-size:11px;color:#555}
+.dp-watermark{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:64px;font-weight:900;color:rgba(0,0,0,.045);white-space:nowrap;pointer-events:none;z-index:0;letter-spacing:8px}
+.dp-sec-banner{background:repeating-linear-gradient(90deg,#c00 0,#c00 18px,#fff 18px,#fff 20px);height:10px;margin:8px -40px}
+.dp-stamp-wrap{position:absolute;bottom:70px;left:60px;opacity:.75}
+.dp-qr-wrap{text-align:center;margin:8px 0}

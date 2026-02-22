@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الجندي المجهول AQ — نظام التقارير العسكرية v2.0</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Tajawal:wght@300;400;500;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/sidebar.css">
+<link rel="stylesheet" href="css/report.css">
+<link rel="stylesheet" href="css/maps.css">
+<link rel="stylesheet" href="css/stamps.css">
+<link rel="stylesheet" href="css/designer.css">
+<link rel="stylesheet" href="css/statistics.css">
+<link rel="stylesheet" href="css/animations.css">
+</head>
+<body class="theme-dark" id="body">
+
+<!-- ============ SPLASH SCREEN ============ -->
+<div id="splashScreen" class="splash-screen">
+  <div class="splash-particles" id="splashParticles"></div>
+  <div class="splash-bg-grid"></div>
+  <div class="splash-content">
+    <div class="splash-emblem">
+      <div class="splash-ring outer"></div>
+      <div class="splash-ring middle"></div>
+      <div class="splash-ring inner"></div>
+      <div class="splash-icon-wrap">
+        <i class="fas fa-shield-halved splash-shield"></i>
+        <i class="fas fa-star splash-star-tl"></i>
+        <i class="fas fa-star splash-star-tr"></i>
+        <i class="fas fa-star splash-star-b"></i>
+      </div>
+    </div>
+    <div class="splash-titles">
+      <h1 class="splash-ar">الجندي المجهول</h1>
+      <h2 class="splash-en">AQ MILITARY REPORTS SYSTEM</h2>
+      <div class="splash-ver">الإصدار 2.0.0 &bull; 2026</div>
+    </div>
+    <div class="splash-loader">
+      <div class="splash-steps-row">
+        <div class="sp-step" id="sp1"><i class="fas fa-lock"></i><span>الأمان</span></div>
+        <div class="sp-step" id="sp2"><i class="fas fa-database"></i><span>قاعدة البيانات</span></div>
+        <div class="sp-step" id="sp3"><i class="fas fa-map"></i><span>الخرائط</span></div>
+        <div class="sp-step" id="sp4"><i class="fas fa-qrcode"></i><span>رموز QR</span></div>
+      </div>
+      <div class="splash-bar-wrap">
+        <div class="splash-bar-bg"><div class="splash-bar-fill" id="splashFill"></div></div>
+        <div class="splash-pct" id="splashPct">0%</div>
+      </div>
+      <div class="splash-status" id="splashStatus">جارٍ تهيئة النظام...</div>
+    </div>
+    <div class="splash-dev">
+      <span>تطوير:</span>
+      <strong>علي قتيبة</strong>
+      <span class="splash-dev-badge">Ali Qateebah &copy; 2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app" class="app-container hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sb-logo"><i class="fas fa-shield-halved"></i></div>
+      <div class="sb-brand" id="sbBrand">
+        <span class="sb-name">الجندي المجهول</span>
+        <span class="sb-ver">AQ v2.0</span>
+      </div>
+      <button class="sb-toggle" id="sbToggle" title="طي القائمة"><i class="fas fa-bars"></i></button>
+    </div>
+
+    <div class="sb-search-wrap" id="sbSearchWrap">
+      <div class="sb-search"><i class="fas fa-search"></i><input type="text" id="sbSearch" placeholder="بحث سريع..." oninput="filterNav(this.value)"></div>
+    </div>
+
+    <nav class="sb-nav" id="sbNav">
+      <div class="nav-group-label">الرئيسية</div>
+      <a class="nav-link active" data-page="dashboard" onclick="nav('dashboard')"><i class="fas fa-gauge-high"></i><span>لوحة التحكم</span></a>
+
+      <div class="nav-group-label">التقارير</div>
+      <a class="nav-link" data-page="newReport" onclick="nav('newReport')"><i class="fas fa-file-circle-plus"></i><span>تقرير جديد</span></a>
+      <a class="nav-link" data-page="documents" onclick="nav('documents')"><i class="fas fa-folder-open"></i><span>أرشيف المستندات</span><span class="nav-badge" id="navBadge">0</span></a>
+      <a class="nav-link" data-page="templates" onclick="nav('templates')"><i class="fas fa-layer-group"></i><span>مكتبة القوالب</span></a>
+
+      <div class="nav-group-label">الأدوات</div>
+      <a class="nav-link" data-page="maps" onclick="nav('maps')"><i class="fas fa-map-marked-alt"></i><span>الخرائط العسكرية</span></a>
+      <a class="nav-link" data-page="stamps" onclick="nav('stamps')"><i class="fas fa-stamp"></i><span>مصمم الأختام</span></a>
+      <a class="nav-link" data-page="designer" onclick="nav('designer')"><i class="fas fa-drafting-compass"></i><span>مصمم المستندات</span></a>
+      <a class="nav-link" data-page="qrManager" onclick="nav('qrManager')"><i class="fas fa-qrcode"></i><span>مدير QR والباركود</span></a>
+
+      <div class="nav-group-label">التحليلات</div>
+      <a class="nav-link" data-page="statistics" onclick="nav('statistics')"><i class="fas fa-chart-pie"></i><span>الإحصاءات والتحليلات</span></a>
+
+      <div class="nav-group-label">النظام</div>
+      <a class="nav-link" data-page="settings" onclick="nav('settings')"><i class="fas fa-gear"></i><span>إعدادات النظام</span></a>
+      <a class="nav-link" data-page="about" onclick="nav('about')"><i class="fas fa-circle-info"></i><span>بطاقة المطور</span></a>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user-card">
+        <div class="sb-avatar"><i class="fas fa-user-shield"></i></div>
+        <div class="sb-user-info" id="sbUserInfo">
+          <span class="sb-username" id="sbUsername">مستخدم النظام</span>
+          <span class="sb-role">مدير النظام</span>
+        </div>
+        <button class="sb-logout-btn" title="تسجيل خروج"><i class="fas fa-arrow-right-from-bracket"></i></button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-wrap" id="mainWrap">
+
+    <!-- TOPBAR -->
+    <header class="topbar" id="topbar">
+      <div class="topbar-r">
+        <button class="tb-btn" id="mobileSbBtn" onclick="toggleMobileSb()"><i class="fas fa-bars"></i></button>
+        <nav class="breadcrumb" id="breadcrumb">
+          <i class="fas fa-house"></i>
+          <span class="bc-sep"><i class="fas fa-chevron-left"></i></span>
+          <span id="bcPage">لوحة التحكم</span>
+        </nav>
+      </div>
+      <div class="topbar-c">
+        <div class="system-badge"><i class="fas fa-shield-halved"></i> نظام التقارير العسكرية</div>
+      </div>
+      <div class="topbar-l">
+        <div class="tb-clock-wrap">
+          <div class="tb-time" id="tbTime">00:00:00</div>
+          <div class="tb-date" id="tbDate">--/--/----</div>
+        </div>
+        <button class="tb-btn" onclick="toggleTheme()" id="themeBtn" title="تبديل المظهر"><i class="fas fa-moon" id="themeIco"></i></button>
+        <button class="tb-btn new-rpt-btn" onclick="nav('newReport')" title="تقرير جديد"><i class="fas fa-plus"></i></button>
+        <div class="tb-notify">
+          <button class="tb-btn" id="notifyBtn"><i class="fas fa-bell"></i><span class="notify-dot" id="notifyDot" style="display:none"></span></button>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGES WRAPPER -->
+    <div class="pages-wrap" id="pagesWrap">
+
+      <!-- ======= DASHBOARD ======= -->
+      <section class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div><h1><i class="fas fa-gauge-high"></i> لوحة التحكم الرئيسية</h1><p class="page-sub">نظرة عامة على النظام والتقارير</p></div>
+          <div class="page-acts">
+            <button class="btn btn-primary" onclick="nav('newReport')"><i class="fas fa-plus"></i> تقرير جديد</button>
+            <button class="btn btn-outline" onclick="refreshDashboard()"><i class="fas fa-rotate-right"></i> تحديث</button>
+          </div>
+        </div>
+
+        <div class="stats-row" id="statsRow">
+          <div class="stat-card" data-color="blue">
+            <div class="sc-icon"><i class="fas fa-file-lines"></i></div>
+            <div class="sc-body"><div class="sc-num" id="stTotal">0</div><div class="sc-lbl">إجمالي التقارير</div></div>
+            <div class="sc-trend"><i class="fas fa-arrow-trend-up"></i></div>
+          </div>
+          <div class="stat-card" data-color="green">
+            <div class="sc-icon"><i class="fas fa-calendar-day"></i></div>
+            <div class="sc-body"><div class="sc-num" id="stToday">0</div><div class="sc-lbl">تقارير اليوم</div></div>
+            <div class="sc-trend"><i class="fas fa-calendar-check"></i></div>
+          </div>
+          <div class="stat-card" data-color="red">
+            <div class="sc-icon"><i class="fas fa-triangle-exclamation"></i></div>
+            <div class="sc-body"><div class="sc-num" id="stUrgent">0</div><div class="sc-lbl">التقارير العاجلة</div></div>
+            <div class="sc-trend"><i class="fas fa-bolt"></i></div>
+          </div>
+          <div class="stat-card" data-color="gold">
+            <div class="sc-icon"><i class="fas fa-circle-check"></i></div>
+            <div class="sc-body"><div class="sc-num" id="stDone">0</div><div class="sc-lbl">التقارير المكتملة</div></div>
+            <div class="sc-trend"><i class="fas fa-check-double"></i></div>
+          </div>
+        </div>
+
+        <div class="db-grid">
+          <div class="db-card db-card-wide">
+            <div class="db-card-head">
+              <h3><i class="fas fa-clock-rotate-left"></i> آخر التقارير</h3>
+              <div class="db-card-acts">
+                <input type="text" class="db-search-input" placeholder="بحث سريع..." oninput="searchRecentTable(this.value)">
+                <button class="btn btn-sm" onclick="nav('documents')">عرض الكل <i class="fas fa-arrow-left"></i></button>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="data-table" id="recentTable">
+                <thead><tr><th>الرقم</th><th>العنوان</th><th>النوع</th><th>الأولوية</th><th>السرية</th><th>التاريخ</th><th>إجراءات</th></tr></thead>
+                <tbody id="recentTbody"><tr><td colspan="7" class="tbl-empty"><i class="fas fa-inbox"></i><br>لا توجد تقارير بعد</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-head"><h3><i class="fas fa-chart-pie"></i> توزيع التقارير</h3></div>
+            <canvas id="dashChart" width="300" height="260"></canvas>
+            <div id="dashLegend" class="chart-legend"></div>
+          </div>
+
+          <div class="db-card">
+            <div class="db-card-head"><h3><i class="fas fa-chart-bar"></i> الأولويات</h3></div>
+            <canvas id="priorityChart" width="300" height="260"></canvas>
+          </div>
+        </div>
+
+        <div class="quick-actions-section">
+          <h3><i class="fas fa-bolt"></i> إجراءات سريعة</h3>
+          <div class="qa-grid">
+            <button class="qa-btn" onclick="nav('newReport')"><i class="fas fa-file-circle-plus"></i><span>تقرير جديد</span></button>
+            <button class="qa-btn" onclick="useTemplateQuick('ops')"><i class="fas fa-crosshairs"></i><span>تقرير عمليات</span></button>
+            <button class="qa-btn" onclick="useTemplateQuick('int')"><i class="fas fa-user-secret"></i><span>تقرير استخباراتي</span></button>
+            <button class="qa-btn" onclick="nav('maps')"><i class="fas fa-map"></i><span>خريطة ميدانية</span></button>
+            <button class="qa-btn" onclick="nav('stamps')"><i class="fas fa-stamp"></i><span>ختم رسمي</span></button>
+            <button class="qa-btn" onclick="nav('qrManager')"><i class="fas fa-qrcode"></i><span>رمز QR</span></button>
+            <button class="qa-btn" onclick="nav('designer')"><i class="fas fa-drafting-compass"></i><span>تصميم مستند</span></button>
+            <button class="qa-btn" onclick="nav('statistics')"><i class="fas fa-chart-line"></i><span>الإحصاءات</span></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= NEW REPORT ======= -->
+      <section class="page" id="page-newReport">
+        <div class="page-header">
+          <div><h1><i class="fas fa-file-circle-plus"></i> إنشاء تقرير عسكري جديد</h1><p class="page-sub">أدخل بيانات التقرير وشاهد المعاينة المباشرة</p></div>
+          <div class="page-acts">
+            <button class="btn btn-outline" onclick="clearForm()"><i class="fas fa-rotate-left"></i> مسح النموذج</button>
+            <button class="btn btn-outline" onclick="saveDraft()"><i class="fas fa-floppy-disk"></i> حفظ مسودة</button>
+            <button class="btn btn-primary" onclick="saveReport()"><i class="fas fa-save"></i> حفظ التقرير</button>
+          </div>
+        </div>
+
+        <div class="report-ws">
+          <!-- FORM -->
+          <div class="rf-panel" id="rfPanel">
+
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-info-circle"></i> البيانات الأساسية</div>
+              <div class="form-row2">
+                <div class="fg">
+                  <label>نوع التقرير <span class="req">*</span></label>
+                  <select id="fType" onchange="onTypeChange()">
+                    <option value="ops">تقرير عمليات</option>
+                    <option value="int">تقرير استخباراتي</option>
+                    <option value="log">تقرير لوجستي</option>
+                    <option value="med">تقرير طبي</option>
+                    <option value="scout">تقرير استطلاع</option>
+                    <option value="com">تقرير اتصالات</option>
+                    <option value="eng">تقرير هندسي</option>
+                    <option value="sec">تقرير أمني</option>
+                    <option value="eom">تقرير نهاية مهمة</option>
+                    <option value="memo">مذكرة رسمية</option>
+                    <option value="daily">تقرير يومي</option>
+                    <option value="inc">تقرير حادثة</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>رقم التقرير</label>
+                  <div class="input-with-icon"><input type="text" id="fNumber" readonly placeholder="يُولَّد تلقائياً"><button class="inner-btn" onclick="regenNumber()" title="إعادة توليد"><i class="fas fa-arrows-rotate"></i></button></div>
+                </div>
+              </div>
+              <div class="form-row2">
+                <div class="fg">
+                  <label>درجة السرية <span class="req">*</span></label>
+                  <select id="fSecret" onchange="livePreview()">
+                    <option value="public">غير سري</option>
+                    <option value="limited">محدود التداول</option>
+                    <option value="secret" selected>سري</option>
+                    <option value="top_secret">سري للغاية</option>
+                    <option value="classified">سري جداً</option>
+                  </select>
+                </div>
+                <div class="fg">
+                  <label>درجة الأولوية <span class="req">*</span></label>
+                  <select id="fPriority" onchange="livePreview()">
+                    <option value="routine">روتيني</option>
+                    <option value="priority">ذو أولوية</option>
+                    <option value="immediate">فوري</option>
+                    <option value="flash">فلاش - عاجل جداً</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-building-shield"></i> معلومات الوحدة</div>
+              <div class="form-row2">
+                <div class="fg"><label>اسم الوحدة</label><input type="text" id="fUnit" placeholder="اسم الوحدة العسكرية" oninput="livePreview()"></div>
+                <div class="fg"><label>الرقم العسكري</label><input type="text" id="fMilNum" placeholder="رقم الوحدة" oninput="livePreview()"></div>
+              </div>
+              <div class="form-row2">
+                <div class="fg">
+                  <label>الرتبة العسكرية</label>
+                  <select id="fRank" onchange="livePreview()">
+                    <option value="">اختر الرتبة</option>
+                    <optgroup label="الأفراد"><option>جندي</option><option>عريف</option><option>رقيب</option><option>رقيب أول</option><option>مساعد</option></optgroup>
+                    <optgroup label="الضباط"><option>ملازم</option><option>ملازم أول</option><option>نقيب</option><option>رائد</option><option>مقدم</option><option>عقيد</option></optgroup>
+                    <optgroup label="الضباط العامون"><option>عميد</option><option>لواء</option><option>فريق</option><option>فريق أول</option><option>مشير</option></optgroup>
+                  </select>
+                </div>
+                <div class="fg"><label>القائد المسؤول</label><input type="text" id="fCommander" placeholder="الاسم الكامل" oninput="livePreview()"></div>
+              </div>
+            </div>
+
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-calendar-clock"></i> الزمان والمكان</div>
+              <div class="form-row3">
+                <div class="fg"><label>تاريخ التقرير</label><input type="date" id="fDate" oninput="livePreview()"></div>
+                <div class="fg"><label>الوقت</label><input type="time" id="fTime" oninput="livePreview()"></div>
+                <div class="fg"><label>المنطقة الزمنية</label><select id="fTZ" onchange="livePreview()"><option>+03:00 صنعاء</option><option>+00:00 UTC</option><option>+04:00 عدن</option></select></div>
+              </div>
+              <div class="fg"><label>الموقع الجغرافي</label><input type="text" id="fLocation" placeholder="اسم الموقع / الإحداثيات" oninput="livePreview()"></div>
+            </div>
+
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-file-lines"></i> محتوى التقرير</div>
+              <div class="fg"><label>عنوان التقرير <span class="req">*</span></label><input type="text" id="fTitle" placeholder="أدخل عنوان التقرير الرئيسي" oninput="livePreview()"></div>
+              <div class="fg"><label>الملخص التنفيذي</label><textarea id="fSummary" rows="3" placeholder="ملخص موجز وشامل للتقرير..." oninput="livePreview()"></textarea></div>
+              <div class="fg"><label>تفاصيل التقرير</label><textarea id="fDetails" rows="5" placeholder="التفاصيل الكاملة والشاملة للتقرير..." oninput="livePreview()"></textarea></div>
+              <div class="fg"><label>الأهداف المنجزة</label><textarea id="fAchieved" rows="3" placeholder="قائمة الأهداف التي تم إنجازها..." oninput="livePreview()"></textarea></div>
+              <div class="fg"><label>التوصيات والمقترحات</label><textarea id="fReco" rows="3" placeholder="التوصيات والإجراءات المقترحة..." oninput="livePreview()"></textarea></div>
+              <div class="fg"><label>ملاحظات إضافية</label><textarea id="fNotes" rows="2" placeholder="أي ملاحظات أو معلومات إضافية..." oninput="livePreview()"></textarea></div>
+            </div>
+
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-shield-halved"></i> الأمان والتحقق</div>
+              <div class="form-row2">
+                <div class="fg">
+                  <label>نوع الختم</label>
+                  <select id="fStamp" onchange="livePreview()">
+                    <option value="none">بدون ختم</option>
+                    <option value="official">ختم رسمي</option>
+                    <option value="secret">ختم سري</option>
+                    <option value="approved">ختم معتمد</option>
+                    <option value="urgent">ختم عاجل</option>
+                    <option value="classified">ختم سري جداً</option>
+                  </select>
+                </div>
+                <div class="fg"><label>نص مخصص للختم</label><input type="text" id="fStampText" placeholder="نص الختم..." oninput="livePreview()"></div>
+              </div>
+              <div class="checks-row">
+                <label class="chk-lbl"><input type="checkbox" id="chkQR" onchange="livePreview()"><span><i class="fas fa-qrcode"></i> رمز QR</span></label>
+                <label class="chk-lbl"><input type="checkbox" id="chkBarcode" onchange="livePreview()"><span><i class="fas fa-barcode"></i> باركود</span></label>
+                <label class="chk-lbl"><input type="checkbox" id="chkWatermark" onchange="livePreview()" checked><span><i class="fas fa-water"></i> علامة مائية</span></label>
+                <label class="chk-lbl"><input type="checkbox" id="chkSecBar" onchange="livePreview()" checked><span><i class="fas fa-minus"></i> شريط أمان</span></label>
+                <label class="chk-lbl"><input type="checkbox" id="chkHeader" onchange="livePreview()" checked><span><i class="fas fa-heading"></i> رأس الصفحة</span></label>
+              </div>
+            </div>
+
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-user-pen"></i> التوقيعات</div>
+              <div class="form-row2">
+                <div class="fg"><label>اسم المحرر</label><input type="text" id="fAuthor" placeholder="اسم محرر التقرير" oninput="livePreview()"></div>
+                <div class="fg"><label>اسم المراجع</label><input type="text" id="fReviewer" placeholder="اسم المراجع" oninput="livePreview()"></div>
+              </div>
+              <div class="fg"><label>اسم المعتمد</label><input type="text" id="fApprover" placeholder="اسم المعتمد" oninput="livePreview()"></div>
+            </div>
+
+          </div>
+
+          <!-- PREVIEW -->
+          <div class="rp-panel" id="rpPanel">
+            <div class="rp-header">
+              <div class="rp-title"><i class="fas fa-eye"></i> معاينة مباشرة</div>
+              <div class="rp-acts">
+                <button class="btn btn-sm btn-outline" onclick="printReport()"><i class="fas fa-print"></i></button>
+                <button class="btn btn-sm btn-primary" onclick="exportPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+              </div>
+            </div>
+            <div class="rp-zoom">
+              <button onclick="changeZoom(-0.1)"><i class="fas fa-minus"></i></button>
+              <span id="zoomLbl">100%</span>
+              <button onclick="changeZoom(0.1)"><i class="fas fa-plus"></i></button>
+            </div>
+            <div class="rp-scroll">
+              <div id="previewWrap" style="transform-origin:top center">
+                <div id="docPreview" class="doc-preview"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= DOCUMENTS ======= -->
+      <section class="page" id="page-documents">
+        <div class="page-header">
+          <div><h1><i class="fas fa-folder-open"></i> أرشيف المستندات</h1><p class="page-sub">إدارة وبحث في التقارير المحفوظة</p></div>
+          <div class="page-acts">
+            <div class="search-wrap"><i class="fas fa-search"></i><input type="text" id="docsQ" placeholder="بحث..." oninput="renderDocs()"></div>
+            <select id="docsTypeF" onchange="renderDocs()" class="sel-filter">
+              <option value="">جميع الأنواع</option>
+              <option value="ops">عمليات</option><option value="int">استخباراتي</option>
+              <option value="log">لوجستي</option><option value="med">طبي</option>
+              <option value="scout">استطلاع</option><option value="com">اتصالات</option>
+              <option value="eng">هندسي</option><option value="sec">أمني</option>
+              <option value="eom">نهاية مهمة</option><option value="memo">مذكرة</option>
+              <option value="daily">يومي</option><option value="inc">حادثة</option>
+            </select>
+            <select id="docsPrioF" onchange="renderDocs()" class="sel-filter">
+              <option value="">جميع الأولويات</option>
+              <option value="flash">فلاش</option><option value="immediate">فوري</option>
+              <option value="priority">ذو أولوية</option><option value="routine">روتيني</option>
+            </select>
+            <button class="btn btn-primary" onclick="nav('newReport')"><i class="fas fa-plus"></i> جديد</button>
+          </div>
+        </div>
+        <div class="view-toggle">
+          <button class="vt-btn active" id="vtGrid" onclick="setView('grid')"><i class="fas fa-grip"></i></button>
+          <button class="vt-btn" id="vtList" onclick="setView('list')"><i class="fas fa-list"></i></button>
+          <span class="docs-count" id="docsCount">0 مستند</span>
+        </div>
+        <div id="docsContainer" class="docs-grid"></div>
+      </section>
+
+      <!-- ======= TEMPLATES ======= -->
+      <section class="page" id="page-templates">
+        <div class="page-header">
+          <div><h1><i class="fas fa-layer-group"></i> مكتبة القوالب</h1><p class="page-sub">قوالب جاهزة لجميع أنواع التقارير العسكرية</p></div>
+        </div>
+        <div class="templates-grid" id="templatesGrid"></div>
+      </section>
+
+      <!-- ======= MAPS ======= -->
+      <section class="page" id="page-maps">
+        <div class="page-header">
+          <div><h1><i class="fas fa-map-marked-alt"></i> الخرائط العسكرية التفاعلية</h1><p class="page-sub">رسم وتوثيق الخرائط الميدانية</p></div>
+          <div class="page-acts">
+            <button class="btn btn-outline" onclick="undoMap()"><i class="fas fa-rotate-left"></i> تراجع</button>
+            <button class="btn btn-outline" onclick="clearMap()"><i class="fas fa-trash"></i> مسح</button>
+            <button class="btn btn-primary" onclick="exportMap()"><i class="fas fa-download"></i> تصدير PNG</button>
+          </div>
+        </div>
+        <div class="map-ws">
+          <div class="map-toolbar" id="mapToolbar">
+            <div class="mt-group">
+              <div class="mt-label">الأدوات</div>
+              <button class="mt-btn active" data-tool="select" onclick="setTool('select')" title="تحديد"><i class="fas fa-arrow-pointer"></i></button>
+              <button class="mt-btn" data-tool="pan" onclick="setTool('pan')" title="تحريك"><i class="fas fa-hand"></i></button>
+              <button class="mt-btn" data-tool="eraser" onclick="setTool('eraser')" title="ممحاة"><i class="fas fa-eraser"></i></button>
+            </div>
+            <div class="mt-group">
+              <div class="mt-label">رموز عسكرية</div>
+              <button class="mt-btn" data-tool="sym_friendly" onclick="setTool('sym_friendly')" title="قوات صديقة"><i class="fas fa-user-shield" style="color:#4CAF50"></i></button>
+              <button class="mt-btn" data-tool="sym_enemy" onclick="setTool('sym_enemy')" title="قوات معادية"><i class="fas fa-skull-crossbones" style="color:#f44336"></i></button>
+              <button class="mt-btn" data-tool="sym_objective" onclick="setTool('sym_objective')" title="هدف"><i class="fas fa-crosshairs" style="color:#FF9800"></i></button>
+              <button class="mt-btn" data-tool="sym_base" onclick="setTool('sym_base')" title="قاعدة"><i class="fas fa-fort-awesome" style="color:#2196F3"></i></button>
+              <button class="mt-btn" data-tool="sym_checkpoint" onclick="setTool('sym_checkpoint')" title="نقطة تفتيش"><i class="fas fa-road-barrier" style="color:#9C27B0"></i></button>
+              <button class="mt-btn" data-tool="sym_supply" onclick="setTool('sym_supply')" title="إمدادات"><i class="fas fa-boxes-stacked" style="color:#795548"></i></button>
+              <button class="mt-btn" data-tool="sym_medical" onclick="setTool('sym_medical')" title="طبي"><i class="fas fa-hospital" style="color:#E91E63"></i></button>
+              <button class="mt-btn" data-tool="sym_artillery" onclick="setTool('sym_artillery')" title="مدفعية"><i class="fas fa-bomb" style="color:#FF5722"></i></button>
+              <button class="mt-btn" data-tool="sym_airfield" onclick="setTool('sym_airfield')" title="مطار"><i class="fas fa-plane" style="color:#00BCD4"></i></button>
+              <button class="mt-btn" data-tool="sym_hq" onclick="setTool('sym_hq')" title="قيادة"><i class="fas fa-satellite-dish" style="color:#FFC107"></i></button>
+            </div>
+            <div class="mt-group">
+              <div class="mt-label">رسم</div>
+              <button class="mt-btn" data-tool="line" onclick="setTool('line')" title="خط مستقيم"><i class="fas fa-slash"></i></button>
+              <button class="mt-btn" data-tool="arrow" onclick="setTool('arrow')" title="سهم"><i class="fas fa-arrow-up-long"></i></button>
+              <button class="mt-btn" data-tool="dashed" onclick="setTool('dashed')" title="خط منقط"><i class="fas fa-ellipsis"></i></button>
+              <button class="mt-btn" data-tool="rect" onclick="setTool('rect')" title="مستطيل"><i class="far fa-square"></i></button>
+              <button class="mt-btn" data-tool="circle" onclick="setTool('circle')" title="دائرة"><i class="far fa-circle"></i></button>
+              <button class="mt-btn" data-tool="freehand" onclick="setTool('freehand')" title="رسم حر"><i class="fas fa-pencil"></i></button>
+              <button class="mt-btn" data-tool="text" onclick="setTool('text')" title="نص"><i class="fas fa-font"></i></button>
+            </div>
+            <div class="mt-group">
+              <div class="mt-label">خيارات</div>
+              <div class="mt-color-wrap"><label>اللون</label><input type="color" id="mapColor" value="#e74c3c" oninput="updateMapOpts()"></div>
+              <div class="mt-select-wrap"><label>السمك</label>
+                <select id="mapLW" onchange="updateMapOpts()">
+                  <option value="1">1</option><option value="2" selected>2</option>
+                  <option value="3">3</option><option value="5">5</option><option value="8">8</option>
+                </select>
+              </div>
+              <div class="mt-select-wrap"><label>الشفافية</label>
+                <select id="mapOpacity" onchange="updateMapOpts()">
+                  <option value="1">100%</option><option value="0.8">80%</option>
+                  <option value="0.6">60%</option><option value="0.4">40%</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="map-main">
+            <canvas id="mapCanvas" class="map-canvas"></canvas>
+            <div class="map-overlay-top">
+              <div class="map-coords" id="mapCoords">X: 0 | Y: 0</div>
+              <div class="map-zoom-ctrl">
+                <button onclick="zoomMap(1.2)"><i class="fas fa-plus"></i></button>
+                <button onclick="zoomMap(0.8)"><i class="fas fa-minus"></i></button>
+                <button onclick="resetMapView()"><i class="fas fa-expand"></i></button>
+              </div>
+            </div>
+            <div class="map-compass">
+              <div class="compass-ring">
+                <span class="cn">N</span><span class="cs">S</span>
+                <span class="ce">E</span><span class="cw">W</span>
+                <div class="compass-arrow"><i class="fas fa-location-arrow"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="map-legend-panel">
+            <div class="mlp-title"><i class="fas fa-map-legend"></i> مفتاح الخريطة</div>
+            <div class="mlp-items">
+              <div class="mli"><span class="mli-dot" style="background:#4CAF50"></span> قوات صديقة</div>
+              <div class="mli"><span class="mli-dot" style="background:#f44336"></span> قوات معادية</div>
+              <div class="mli"><span class="mli-dot" style="background:#FF9800"></span> هدف</div>
+              <div class="mli"><span class="mli-dot" style="background:#2196F3"></span> قاعدة</div>
+              <div class="mli"><span class="mli-dot" style="background:#9C27B0"></span> نقطة تفتيش</div>
+              <div class="mli"><span class="mli-dot" style="background:#795548"></span> إمدادات</div>
+              <div class="mli"><span class="mli-dot" style="background:#E91E63"></span> طبي</div>
+              <div class="mli"><span class="mli-dot" style="background:#FF5722"></span> مدفعية</div>
+              <div class="mli"><span class="mli-dot" style="background:#00BCD4"></span> مطار</div>
+              <div class="mli"><span class="mli-dot" style="background:#FFC107"></span> مركز قيادة</div>
+            </div>
+            <div class="mlp-title" style="margin-top:16px"><i class="fas fa-layer-group"></i> الطبقات</div>
+            <div class="mlp-layers">
+              <label class="layer-chk"><input type="checkbox" checked onchange="toggleLayer('symbols')"> الرموز</label>
+              <label class="layer-chk"><input type="checkbox" checked onchange="toggleLayer('drawings')"> الرسومات</label>
+              <label class="layer-chk"><input type="checkbox" checked onchange="toggleLayer('text')"> النصوص</label>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= STAMPS ======= -->
+      <section class="page" id="page-stamps">
+        <div class="page-header">
+          <div><h1><i class="fas fa-stamp"></i> مصمم الأختام الاحترافي</h1><p class="page-sub">تصميم وتخصيص الأختام الرسمية</p></div>
+        </div>
+        <div class="stamps-ws">
+          <div class="st-controls">
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-shapes"></i> شكل الختم</div>
+              <div class="shape-btns">
+                <button class="sh-btn active" data-shape="circle" onclick="setShape('circle')"><i class="far fa-circle"></i> دائري</button>
+                <button class="sh-btn" data-shape="oval" onclick="setShape('oval')"><i class="fas fa-egg"></i> بيضاوي</button>
+                <button class="sh-btn" data-shape="rect" onclick="setShape('rect')"><i class="far fa-square"></i> مستطيل</button>
+                <button class="sh-btn" data-shape="hexagon" onclick="setShape('hexagon')"><i class="fas fa-hexagon"></i> سداسي</button>
+                <button class="sh-btn" data-shape="diamond" onclick="setShape('diamond')"><i class="fas fa-diamond"></i> معيني</button>
+              </div>
+            </div>
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-sliders"></i> تخصيص الختم</div>
+              <div class="fg"><label>النص الرئيسي</label><input type="text" id="stMain" value="رسمي" oninput="drawStamp()"></div>
+              <div class="fg"><label>النص الدائري العلوي</label><input type="text" id="stTop" value="القوات المسلحة اليمنية" oninput="drawStamp()"></div>
+              <div class="fg"><label>النص الدائري السفلي</label><input type="text" id="stBot" value="وزارة الدفاع" oninput="drawStamp()"></div>
+              <div class="fg"><label>الوحدة / التاريخ</label><input type="text" id="stUnit" value="2026" oninput="drawStamp()"></div>
+              <div class="form-row2">
+                <div class="fg"><label>لون الختم</label><input type="color" id="stColor" value="#c41e3a" oninput="drawStamp()"></div>
+                <div class="fg"><label>الحجم <span id="stSizeVal">200</span>px</label><input type="range" id="stSize" min="120" max="320" value="200" oninput="document.getElementById('stSizeVal').textContent=this.value;drawStamp()"></div>
+              </div>
+              <div class="form-row2">
+                <div class="fg"><label>نمط الختم</label>
+                  <select id="stStyle" onchange="drawStamp()">
+                    <option value="classic">كلاسيكي</option>
+                    <option value="modern">حديث</option>
+                    <option value="ornate">مزخرف</option>
+                    <option value="simple">بسيط</option>
+                  </select>
+                </div>
+                <div class="fg"><label>عدد النجوم</label>
+                  <select id="stStars" onchange="drawStamp()">
+                    <option value="0">بدون</option>
+                    <option value="3" selected>3 نجوم</option>
+                    <option value="5">5 نجوم</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="rf-section">
+              <div class="rf-sec-title"><i class="fas fa-bookmark"></i> أختام جاهزة</div>
+              <div class="preset-stamps-grid">
+                <button class="ps-btn" onclick="loadPreset('secret')">سري</button>
+                <button class="ps-btn" onclick="loadPreset('top_secret')">سري جداً</button>
+                <button class="ps-btn" onclick="loadPreset('official')">رسمي</button>
+                <button class="ps-btn" onclick="loadPreset('approved')">معتمد</button>
+                <button class="ps-btn" onclick="loadPreset('urgent')">عاجل</button>
+                <button class="ps-btn" onclick="loadPreset('classified')">مصنف</button>
+                <button class="ps-btn" onclick="loadPreset('medical')">طبي</button>
+                <button class="ps-btn" onclick="loadPreset('private')">خاص</button>
+              </div>
+            </div>
+            <div class="st-export-row">
+              <button class="btn btn-primary" onclick="downloadStamp()"><i class="fas fa-download"></i> تحميل PNG</button>
+              <button class="btn btn-outline" onclick="copyStampToReport()"><i class="fas fa-copy"></i> إضافة للتقرير</button>
+            </div>
+          </div>
+          <div class="st-preview">
+            <div class="st-preview-title">معاينة الختم</div>
+            <canvas id="stampCanvas" width="380" height="380"></canvas>
+            <div class="st-info" id="stInfo">الشكل: دائري | اللون: #c41e3a | الحجم: 200px</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= DESIGNER ======= -->
+      <section class="page" id="page-designer">
+        <div class="page-header">
+          <div><h1><i class="fas fa-drafting-compass"></i> مصمم المستندات الاحترافي</h1><p class="page-sub">تصميم مستندات باحترافية عالية</p></div>
+          <div class="page-acts">
+            <select id="dsnTemplate" onchange="loadDsnTemplate()" class="sel-filter">
+              <option value="">اختر قالباً...</option>
+              <option value="ops">قالب تقرير عمليات</option>
+              <option value="int">قالب تقرير استخبارات</option>
+              <option value="letter">قالب خطاب رسمي</option>
+              <option value="memo">قالب مذكرة داخلية</option>
+              <option value="cert">قالب شهادة / وثيقة</option>
+            </select>
+            <button class="btn btn-outline" onclick="clearDsn()"><i class="fas fa-trash"></i> مسح</button>
+            <button class="btn btn-outline" onclick="printDsn()"><i class="fas fa-print"></i> طباعة</button>
+            <button class="btn btn-primary" onclick="exportDsnPDF()"><i class="fas fa-file-pdf"></i> PDF</button>
+          </div>
+        </div>
+        <div class="dsn-ws">
+          <div class="dsn-elements-panel">
+            <div class="dep-title">العناصر</div>
+            <div class="dep-list">
+              <button class="dep-btn" onclick="addDsnElem('header')"><i class="fas fa-heading"></i> ترويسة رسمية</button>
+              <button class="dep-btn" onclick="addDsnElem('title')"><i class="fas fa-bold"></i> عنوان</button>
+              <button class="dep-btn" onclick="addDsnElem('text')"><i class="fas fa-paragraph"></i> قسم نصي</button>
+              <button class="dep-btn" onclick="addDsnElem('table')"><i class="fas fa-table"></i> جدول</button>
+              <button class="dep-btn" onclick="addDsnElem('signature')"><i class="fas fa-signature"></i> توقيعات</button>
+              <button class="dep-btn" onclick="addDsnElem('qr')"><i class="fas fa-qrcode"></i> رمز QR</button>
+              <button class="dep-btn" onclick="addDsnElem('stamp')"><i class="fas fa-stamp"></i> ختم رسمي</button>
+              <button class="dep-btn" onclick="addDsnElem('divider')"><i class="fas fa-minus"></i> فاصل زخرفي</button>
+              <button class="dep-btn" onclick="addDsnElem('image')"><i class="fas fa-image"></i> صورة / شعار</button>
+              <button class="dep-btn" onclick="addDsnElem('watermark')"><i class="fas fa-water"></i> علامة مائية</button>
+              <button class="dep-btn" onclick="addDsnElem('secbar')"><i class="fas fa-shield"></i> شريط أمان</button>
+              <button class="dep-btn" onclick="addDsnElem('footer')"><i class="fas fa-shoe-prints"></i> تذييل الصفحة</button>
+            </div>
+          </div>
+          <div class="dsn-canvas-area">
+            <div class="dsn-toolbar">
+              <button onclick="dsnZoom(-0.1)"><i class="fas fa-minus"></i></button>
+              <span id="dsnZoomLbl">100%</span>
+              <button onclick="dsnZoom(0.1)"><i class="fas fa-plus"></i></button>
+              <div style="width:1px;height:20px;background:var(--border);margin:0 8px"></div>
+              <button onclick="dsnUndo()" title="تراجع"><i class="fas fa-rotate-left"></i></button>
+              <button onclick="dsnRedo()" title="إعادة"><i class="fas fa-rotate-right"></i></button>
+            </div>
+            <div class="dsn-scroll-wrap">
+              <div class="dsn-page-shadow">
+                <div class="dsn-page" id="dsnPage">
+                  <div class="dsn-empty-hint" id="dsnEmptyHint"><i class="fas fa-drafting-compass"></i><p>اختر قالباً من القائمة أو أضف عناصر من اليمين للبدء</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= QR MANAGER ======= -->
+      <section class="page" id="page-qrManager">
+        <div class="page-header">
+          <div><h1><i class="fas fa-qrcode"></i> مدير QR والباركود</h1><p class="page-sub">توليد رموز التحقق والتوثيق</p></div>
+        </div>
+        <div class="qr-ws">
+          <div class="qr-card">
+            <div class="qrc-title"><i class="fas fa-qrcode"></i> رمز QR</div>
+            <div class="fg"><label>المحتوى / الرابط</label><textarea id="qrText" rows="3" placeholder="أدخل النص أو الرابط أو البيانات...">الجندي المجهول AQ — نظام التقارير العسكرية v2.0</textarea></div>
+            <div class="form-row2">
+              <div class="fg"><label>الحجم</label><select id="qrSz"><option value="128">صغير 128</option><option value="200" selected>متوسط 200</option><option value="256">كبير 256</option><option value="350">كبير جداً 350</option></select></div>
+              <div class="fg"><label>مستوى التصحيح</label><select id="qrEC"><option value="L">L منخفض</option><option value="M" selected>M متوسط</option><option value="Q">Q عالي</option><option value="H">H عالي جداً</option></select></div>
+            </div>
+            <div class="form-row2">
+              <div class="fg"><label>لون القرمود</label><input type="color" id="qrDark" value="#0a0e1a"></div>
+              <div class="fg"><label>لون الخلفية</label><input type="color" id="qrLight" value="#ffffff"></div>
+            </div>
+            <div class="fg"><label>نص الوصف (أسفل الكود)</label><input type="text" id="qrLabel" placeholder="وصف الرمز..." value="للتحقق من الأصالة"></div>
+            <button class="btn btn-primary" onclick="genQR()"><i class="fas fa-qrcode"></i> توليد رمز QR</button>
+            <div id="qrOut" class="qr-output"></div>
+            <button class="btn btn-outline" id="dlQRBtn" onclick="dlQR()" style="display:none;margin-top:8px"><i class="fas fa-download"></i> تحميل PNG</button>
+          </div>
+
+          <div class="qr-card">
+            <div class="qrc-title"><i class="fas fa-barcode"></i> باركود</div>
+            <div class="fg"><label>النص / الأرقام</label><input type="text" id="bcText" value="AQ-2026-001" placeholder="أدخل النص أو الأرقام..."></div>
+            <div class="form-row2">
+              <div class="fg"><label>نوع الباركود</label><select id="bcType"><option value="128">Code 128</option><option value="39">Code 39</option><option value="ean">EAN-13 (أرقام فقط)</option></select></div>
+              <div class="fg"><label>لون الباركود</label><input type="color" id="bcColor" value="#000000"></div>
+            </div>
+            <button class="btn btn-primary" onclick="genBarcode()"><i class="fas fa-barcode"></i> توليد باركود</button>
+            <div id="bcOut" class="qr-output"></div>
+          </div>
+
+          <div class="qr-card">
+            <div class="qrc-title"><i class="fas fa-shield-halved"></i> علامة مضادة للتزوير</div>
+            <div class="fg"><label>نص التحقق</label><input type="text" id="afText" value="وثيقة رسمية معتمدة — القوات المسلحة اليمنية" placeholder="نص التحقق..."></div>
+            <div class="form-row2">
+              <div class="fg"><label>النمط</label><select id="afPattern"><option value="stripe">خطوط</option><option value="dots">نقاط</option><option value="wave">موجات</option></select></div>
+              <div class="fg"><label>اللون</label><input type="color" id="afColor" value="#c41e3a"></div>
+            </div>
+            <button class="btn btn-primary" onclick="genAF()"><i class="fas fa-shield"></i> توليد العلامة</button>
+            <div id="afOut" class="qr-output"></div>
+          </div>
+
+          <div class="qr-card">
+            <div class="qrc-title"><i class="fas fa-id-card"></i> بطاقة تعريف رقمية</div>
+            <div class="fg"><label>اسم الشخص</label><input type="text" id="idName" placeholder="الاسم الكامل"></div>
+            <div class="form-row2">
+              <div class="fg"><label>الرتبة</label><input type="text" id="idRank" placeholder="الرتبة"></div>
+              <div class="fg"><label>الرقم العسكري</label><input type="text" id="idNum" placeholder="الرقم"></div>
+            </div>
+            <div class="fg"><label>الوحدة</label><input type="text" id="idUnit" placeholder="اسم الوحدة"></div>
+            <button class="btn btn-primary" onclick="genIDCard()"><i class="fas fa-id-card"></i> توليد البطاقة</button>
+            <div id="idOut" class="qr-output"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= STATISTICS ======= -->
+      <section class="page" id="page-statistics">
+        <div class="page-header">
+          <div><h1><i class="fas fa-chart-pie"></i> الإحصاءات والتحليلات</h1><p class="page-sub">تحليل وعرض بيانات التقارير</p></div>
+          <div class="page-acts"><button class="btn btn-outline" onclick="renderStats()"><i class="fas fa-rotate-right"></i> تحديث</button></div>
+        </div>
+        <div class="stats-overview-row">
+          <div class="so-card"><div class="soc-num" id="soTotal">0</div><div class="soc-lbl">إجمالي التقارير</div></div>
+          <div class="so-card so-green"><div class="soc-num" id="soRoutine">0</div><div class="soc-lbl">روتيني</div></div>
+          <div class="so-card so-gold"><div class="soc-num" id="soPriority">0</div><div class="soc-lbl">ذو أولوية</div></div>
+          <div class="so-card so-orange"><div class="soc-num" id="soImm">0</div><div class="soc-lbl">فوري</div></div>
+          <div class="so-card so-red"><div class="soc-num" id="soFlash">0</div><div class="soc-lbl">فلاش</div></div>
+        </div>
+        <div class="stats-charts-grid">
+          <div class="sc-card"><div class="scc-title"><i class="fas fa-chart-bar"></i> التقارير حسب النوع</div><canvas id="barChart" height="280"></canvas></div>
+          <div class="sc-card"><div class="scc-title"><i class="fas fa-chart-pie"></i> التوزيع النسبي</div><canvas id="pieChart" width="300" height="280"></canvas><div id="pieLegend" class="chart-legend"></div></div>
+          <div class="sc-card"><div class="scc-title"><i class="fas fa-chart-line"></i> توزيع الأولويات</div><canvas id="prioBar" height="280"></canvas></div>
+          <div class="sc-card"><div class="scc-title"><i class="fas fa-shield-halved"></i> توزيع السرية</div><canvas id="secretChart" width="300" height="280"></canvas><div id="secretLegend" class="chart-legend"></div></div>
+        </div>
+      </section>
+
+      <!-- ======= SETTINGS ======= -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <div><h1><i class="fas fa-gear"></i> إعدادات النظام</h1><p class="page-sub">تخصيص وتكوين النظام</p></div>
+          <div class="page-acts"><button class="btn btn-primary" onclick="saveSettings()"><i class="fas fa-save"></i> حفظ الإعدادات</button></div>
+        </div>
+        <div class="settings-grid">
+          <div class="sg-card">
+            <h4><i class="fas fa-building-shield"></i> بيانات المؤسسة</h4>
+            <div class="fg"><label>اسم المؤسسة</label><input type="text" id="sOrg" value="القوات المسلحة اليمنية"></div>
+            <div class="fg"><label>القيادة الرئيسية</label><input type="text" id="sCmd" value="القيادة العامة للقوات المسلحة"></div>
+            <div class="fg"><label>البلد</label><input type="text" id="sCtry" value="الجمهورية اليمنية"></div>
+            <div class="fg"><label>شعار الجانب</label><input type="text" id="sSlogan" placeholder="شعار أو عبارة النظام..."></div>
+            <div class="fg"><label>رقم التسلسل الأولي</label><input type="number" id="sStartNum" value="1001" min="1"></div>
+          </div>
+          <div class="sg-card">
+            <h4><i class="fas fa-palette"></i> مظهر النظام</h4>
+            <div class="fg"><label>اللون الرئيسي</label><input type="color" id="sPrimary" value="#c9a227" oninput="previewColor(this.value)"></div>
+            <div class="fg"><label>الخط الرئيسي</label>
+              <select id="sFont" onchange="previewFont(this.value)">
+                <option value="Cairo" selected>Cairo</option>
+                <option value="Tajawal">Tajawal</option>
+                <option value="Amiri">Amiri</option>
+              </select>
+            </div>
+            <div class="fg"><label>المظهر</label>
+              <select id="sTheme" onchange="applyTheme(this.value)">
+                <option value="dark" selected>داكن</option>
+                <option value="light">فاتح</option>
+              </select>
+            </div>
+            <div class="fg check-fg"><label class="chk-lbl"><input type="checkbox" id="sAnimations" checked><span>تفعيل التأثيرات والحركات</span></label></div>
+          </div>
+          <div class="sg-card">
+            <h4><i class="fas fa-lock"></i> الأمان والخصوصية</h4>
+            <div class="fg"><label>كلمة مرور النظام</label><input type="password" id="sPass" placeholder="اتركه فارغاً لعدم استخدام كلمة مرور"></div>
+            <div class="fg"><label>تأكيد كلمة المرور</label><input type="password" id="sPass2" placeholder="أعد كتابة كلمة المرور"></div>
+            <div class="fg"><label>مستوى الوصول الافتراضي</label>
+              <select id="sAccess">
+                <option value="public">غير سري</option>
+                <option value="limited">محدود التداول</option>
+                <option value="secret" selected>سري</option>
+                <option value="top_secret">سري للغاية</option>
+              </select>
+            </div>
+            <div class="fg check-fg"><label class="chk-lbl"><input type="checkbox" id="sEncrypt" checked><span>تشفير المستندات المحفوظة</span></label></div>
+          </div>
+          <div class="sg-card">
+            <h4><i class="fas fa-print"></i> إعدادات الطباعة</h4>
+            <div class="fg"><label>حجم الورقة</label>
+              <select id="sPaper"><option value="a4" selected>A4</option><option value="a3">A3</option><option value="letter">Letter</option><option value="legal">Legal</option></select>
+            </div>
+            <div class="fg"><label>اتجاه الطباعة</label>
+              <select id="sOrient"><option value="portrait" selected>عمودي Portrait</option><option value="landscape">أفقي Landscape</option></select>
+            </div>
+            <div class="fg check-fg">
+              <label class="chk-lbl"><input type="checkbox" id="sAutoQR" checked><span>إضافة QR تلقائياً</span></label>
+              <label class="chk-lbl"><input type="checkbox" id="sPageNum" checked><span>ترقيم الصفحات</span></label>
+              <label class="chk-lbl"><input type="checkbox" id="sPrintHeader" checked><span>رأس الصفحة في الطباعة</span></label>
+            </div>
+          </div>
+          <div class="sg-card">
+            <h4><i class="fas fa-database"></i> إدارة البيانات</h4>
+            <div class="sg-data-acts">
+              <button class="btn btn-outline" onclick="exportData()"><i class="fas fa-file-export"></i> تصدير JSON</button>
+              <button class="btn btn-outline" onclick="triggerImport()"><i class="fas fa-file-import"></i> استيراد</button>
+              <button class="btn btn-outline" onclick="exportAllPDF()"><i class="fas fa-file-pdf"></i> تصدير كل PDF</button>
+            </div>
+            <input type="file" id="importInput" style="display:none" accept=".json" onchange="doImport(event)">
+            <div class="sg-info">
+              <div><strong>عدد التقارير:</strong> <span id="settDocsCount">0</span></div>
+              <div><strong>حجم البيانات:</strong> <span id="settDataSize">0 KB</span></div>
+              <div><strong>آخر حفظ:</strong> <span id="settLastSave">-</span></div>
+            </div>
+            <button class="btn btn-danger" onclick="confirmClearAll()"><i class="fas fa-trash"></i> مسح جميع البيانات</button>
+          </div>
+          <div class="sg-card">
+            <h4><i class="fas fa-bell"></i> الإشعارات</h4>
+            <div class="fg check-fg">
+              <label class="chk-lbl"><input type="checkbox" id="nSave" checked><span>إشعار عند الحفظ</span></label>
+              <label class="chk-lbl"><input type="checkbox" id="nDelete" checked><span>تأكيد عند الحذف</span></label>
+              <label class="chk-lbl"><input type="checkbox" id="nExport"><span>إشعار عند التصدير</span></label>
+            </div>
+            <div class="fg"><label>صوت التنبيه</label>
+              <select id="nSound"><option value="none">بدون صوت</option><option value="beep">صوت تنبيه</option></select>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======= ABOUT ======= -->
+      <section class="page" id="page-about">
+        <div class="page-header">
+          <div><h1><i class="fas fa-circle-info"></i> بطاقة المطور</h1><p class="page-sub">معلومات النظام والمطور</p></div>
+        </div>
+        <div class="about-wrap">
+          <div class="about-hero">
+            <div class="ah-emblem"><i class="fas fa-shield-halved"></i></div>
+            <h2>الجندي المجهول AQ</h2>
+            <p>نظام التقارير العسكرية المتكامل</p>
+            <div class="ah-version">الإصدار 2.0.0 &bull; 2026</div>
+            <div class="ah-tags"><span>عربي 100%</span><span>يعمل بدون إنترنت</span><span>مفتوح المصدر</span><span>آمن</span></div>
+          </div>
+          <div class="about-grid">
+            <div class="ab-card">
+              <h4><i class="fas fa-user-astronaut"></i> المطور</h4>
+              <div class="ab-dev">
+                <div class="ab-avatar"><i class="fas fa-user-astronaut"></i></div>
+                <div>
+                  <div class="ab-dev-name">علي قتيبة</div>
+                  <div class="ab-dev-en">Ali Qateebah</div>
+                  <div class="ab-dev-role">مطور أنظمة عسكرية &bull; اليمن</div>
+                </div>
+              </div>
+              <div class="ab-contacts">
+                <a class="ab-contact" href="mailto:aliqateebah@gmail.com"><i class="fas fa-envelope"></i> aliqateebah@gmail.com</a>
+                <div class="ab-contact"><i class="fab fa-whatsapp"></i> 967783265552+</div>
+                <div class="ab-contact"><i class="fab fa-whatsapp"></i> 967783265553+</div>
+                <div class="ab-contact"><i class="fas fa-phone"></i> 967781208883+</div>
+              </div>
+            </div>
+            <div class="ab-card">
+              <h4><i class="fas fa-code"></i> التقنيات المستخدمة</h4>
+              <div class="ab-techs">
+                <span class="tech-tag">HTML5</span><span class="tech-tag">CSS3</span><span class="tech-tag">JavaScript ES2026</span>
+                <span class="tech-tag">Canvas API</span><span class="tech-tag">SVG</span><span class="tech-tag">QRCode.js</span>
+                <span class="tech-tag">jsPDF</span><span class="tech-tag">html2canvas</span><span class="tech-tag">Font Awesome 6</span>
+                <span class="tech-tag">Google Fonts</span><span class="tech-tag">LocalStorage</span><span class="tech-tag">IndexedDB (قريباً)</span>
+              </div>
+            </div>
+            <div class="ab-card">
+              <h4><i class="fas fa-info"></i> معلومات النظام</h4>
+              <table class="ab-table">
+                <tr><td>اسم النظام</td><td>الجندي المجهول AQ</td></tr>
+                <tr><td>الإصدار</td><td>2.0.0</td></tr>
+                <tr><td>سنة الإصدار</td><td>2026</td></tr>
+                <tr><td>اللغة الرئيسية</td><td>العربية (RTL)</td></tr>
+                <tr><td>التوافق</td><td>Chrome, Firefox, Edge, Safari</td></tr>
+                <tr><td>الترخيص</td><td>&copy; 2026 علي قتيبة - جميع الحقوق محفوظة</td></tr>
+              </table>
+            </div>
+            <div class="ab-card">
+              <h4><i class="fas fa-road"></i> خارطة الطريق</h4>
+              <div class="ab-roadmap">
+                <div class="rm-item rm-done"><span class="rm-ver">v2.0</span><span>النظام الحالي - 2026</span><i class="fas fa-check-circle"></i></div>
+                <div class="rm-item rm-soon"><span class="rm-ver">v2.1</span><span>دعم استيراد الصور - Q2 2026</span><i class="fas fa-clock"></i></div>
+                <div class="rm-item rm-soon"><span class="rm-ver">v2.5</span><span>Firebase + مصادقة - Q4 2026</span><i class="fas fa-clock"></i></div>
+                <div class="rm-item rm-future"><span class="rm-ver">v3.0</span><span>PWA + تطبيق Android - Q2 2027</span><i class="fas fa-rocket"></i></div>
+                <div class="rm-item rm-future"><span class="rm-ver">v4.0</span><span>ذكاء اصطناعي + GPS - 2028</span><i class="fas fa-robot"></i></div>
+              </div>
+              <div class="ab-firebase">
+                <div class="abf-title"><i class="fas fa-fire"></i> مشروع Firebase المستقبلي</div>
+                <code>aq-v3-cd438</code><br>
+                <small style="color:var(--text-muted)">Project ID: aq-v3-cd438 | Android: com.aq</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /pages-wrap -->
+  </main>
+</div><!-- /app -->
+
+<!-- Toast Container -->
+<div id="toastContainer"></div>
+
+<!-- Modal -->
+<div id="modalOverlay" class="modal-overlay" onclick="closeModal()">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-head"><h3 id="modalTitle">تأكيد</h3><button onclick="closeModal()"><i class="fas fa-times"></i></button></div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-foot"><button class="btn btn-outline" onclick="closeModal()">إلغاء</button><button class="btn btn-danger" id="modalOkBtn">تأكيد</button></div>
+  </div>
+</div>
+
+<!-- Context Menu -->
+<div id="ctxMenu" class="ctx-menu" style="display:none">
+  <button onclick="ctxView()"><i class="fas fa-eye"></i> عرض</button>
+  <button onclick="ctxPrint()"><i class="fas fa-print"></i> طباعة</button>
+  <button onclick="ctxDuplicate()"><i class="fas fa-copy"></i> نسخ</button>
+  <button onclick="ctxDelete()" class="ctx-danger"><i class="fas fa-trash"></i> حذف</button>
+</div>
+
+<script src="js/state.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/app.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/report.js"></script>
+<script src="js/documents.js"></script>
+<script src="js/templates.js"></script>
+<script src="js/maps.js"></script>
+<script src="js/stamps.js"></script>
+<script src="js/designer.js"></script>
+<script src="js/qr.js"></script>
+<script src="js/statistics.js"></script>
+<script src="js/settings.js"></script>
+</body>
+</html>

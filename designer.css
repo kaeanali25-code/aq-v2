@@ -1,0 +1,24 @@
+/* designer.css */
+.dsn-ws{display:grid;grid-template-columns:190px 1fr;gap:18px;height:calc(100vh - 178px)}
+.dsn-elements-panel{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:16px;overflow-y:auto;scrollbar-width:thin}
+.dep-title{font-size:12px;font-weight:800;color:var(--text-s);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);text-transform:uppercase;letter-spacing:1px}
+.dep-list{display:flex;flex-direction:column;gap:6px}
+.dep-btn{padding:10px 12px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text);border-radius:var(--r-s);font-size:12px;font-weight:700;text-align:right;display:flex;align-items:center;gap:8px;transition:all .2s}
+.dep-btn i{color:var(--primary);width:14px;text-align:center;flex-shrink:0}
+.dep-btn:hover{background:var(--bg-hover);border-color:var(--primary)}
+.dsn-canvas-area{display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.dsn-toolbar{display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-s);padding:8px 14px;flex-wrap:wrap}
+.dsn-toolbar button{width:28px;height:28px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text);border-radius:var(--r-xs);font-size:11px;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.dsn-toolbar button:hover{background:var(--primary);color:#fff}
+#dsnZoomLbl{font-size:12px;font-weight:800;color:var(--text-s);min-width:38px;text-align:center}
+.dsn-scroll-wrap{flex:1;overflow:auto;background:#888;border-radius:var(--r);display:flex;align-items:flex-start;justify-content:center;padding:24px}
+.dsn-page-shadow{box-shadow:0 8px 40px rgba(0,0,0,.6)}
+.dsn-page{background:#fff;color:#1a1a2e;width:794px;min-height:1123px;padding:60px;font-family:'Cairo',sans-serif;font-size:13px;direction:rtl;position:relative;transform-origin:top center;transition:transform .2s}
+.dsn-empty-hint{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:400px;color:#bbb;gap:16px;text-align:center}
+.dsn-empty-hint i{font-size:64px;opacity:.2}
+.dsn-empty-hint p{font-size:15px}
+.dsn-el{position:relative;margin-bottom:16px;border:1.5px dashed transparent;padding:4px;border-radius:4px;transition:border-color .2s}
+.dsn-el:hover{border-color:#c9a227}
+.dsn-el-del{position:absolute;top:-10px;left:-10px;width:22px;height:22px;background:#e74c3c;color:#fff;border:none;border-radius:50%;font-size:10px;display:none;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+.dsn-el:hover .dsn-el-del{display:flex}
+@media(max-width:900px){.dsn-ws{grid-template-columns:1fr;height:auto}}
