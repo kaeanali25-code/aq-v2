@@ -1,0 +1,14 @@
+/* stamps.css */
+.stamps-ws{display:grid;grid-template-columns:360px 1fr;gap:22px;align-items:start}
+.shape-btns{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:4px}
+.sh-btn{padding:7px 14px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-s);border-radius:var(--r-s);font-size:12px;font-weight:700;transition:all .2s;display:flex;align-items:center;gap:6px}
+.sh-btn:hover,.sh-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+.preset-stamps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.ps-btn{padding:8px;border:1px solid var(--border);background:var(--bg-card2);color:var(--text-s);border-radius:var(--r-s);font-size:12px;font-weight:800;transition:all .2s;text-align:center}
+.ps-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(201,162,39,.1)}
+.st-export-row{display:flex;gap:10px;padding:0 20px 20px}
+.st-preview{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r);padding:24px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.st-preview-title{font-size:14px;font-weight:700;align-self:flex-start}
+#stampCanvas{max-width:100%}
+.st-info{font-size:11px;color:var(--text-m);text-align:center}
+@media(max-width:900px){.stamps-ws{grid-template-columns:1fr}}
